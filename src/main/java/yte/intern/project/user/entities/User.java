@@ -1,10 +1,8 @@
 package yte.intern.project.user.entities;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import yte.intern.project.event.entities.Event;
@@ -62,11 +60,11 @@ public class User implements UserDetails {
     private String email;
     private String password;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "USER_AUTHORITIES",
             joinColumns = @JoinColumn(name = "USER_ID"),
-            inverseJoinColumns = @JoinColumn(name = "AUTHORITY_ID")
+            inverseJoinColumns = @JoinColumn(name = "AUTH_ID")
     )
     private Set<Authority> authorities;
 
@@ -109,7 +107,4 @@ public class User implements UserDetails {
         eventSet.add(event);
     }
 
-    public void AddAuthorityToUser(Authority authority){
-        authorities.add(authority);
-    }
 }

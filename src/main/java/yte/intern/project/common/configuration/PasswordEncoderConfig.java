@@ -1,4 +1,4 @@
-package yte.intern.project.user.configuration;
+package yte.intern.project.common.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

@@ -2,14 +2,11 @@ package yte.intern.project.user.controller.request;
 
 
 import lombok.RequiredArgsConstructor;
-import yte.intern.project.event.entities.Event;
-import yte.intern.project.user.entities.Authority;
 import yte.intern.project.user.entities.User;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
 
 @RequiredArgsConstructor
 public class UpdateUserRequest {

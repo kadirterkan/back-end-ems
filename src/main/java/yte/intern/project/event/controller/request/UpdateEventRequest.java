@@ -26,7 +26,8 @@ public class UpdateEventRequest {
                 0L,
                 eventName,
                 startTime,
-                endTime,questions,
+                endTime,
+//                questions, TODO: Sorular eklenecek
                 new HashSet<User>());
     }
 }
