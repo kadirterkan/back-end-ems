@@ -1,4 +1,4 @@
-package yte.intern.project.user.controller.request;
+package yte.intern.project.user.registration.request;
 
 
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,26 @@ import javax.validation.constraints.Size;
 import java.util.HashSet;
 
 @RequiredArgsConstructor
-public class AddUserRequest {
+public class RegisterRequest {
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getTcKimlikNumber() {
+        return tcKimlikNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
 
     @NotEmpty(message = "İsim Kısmını Boş Bırakamazsınız")
     @Size(max = 255,message = "İsminiz Bu Kadar Uzun Olamaz")

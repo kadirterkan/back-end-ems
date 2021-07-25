@@ -17,6 +17,38 @@ import java.util.Set;
 @NoArgsConstructor
 public class User implements UserDetails {
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setTcKimlikNumber(String tcKimlikNumber) {
+        this.tcKimlikNumber = tcKimlikNumber;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
+    }
+
+    public void setEventSet(Set<Event> eventSet) {
+        this.eventSet = eventSet;
+    }
+
     public User(String username,
                 String firstName,
                 String lastName,

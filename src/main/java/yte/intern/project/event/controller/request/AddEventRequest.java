@@ -12,8 +12,20 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
-@RequiredArgsConstructor
 public class AddEventRequest {
+
+    public AddEventRequest(String eventName,
+                           Long quota,
+                           LocalDateTime startTime,
+                           LocalDateTime endTime) {
+        this.eventName = eventName;
+        this.quota = quota;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        if(startTime.isBefore(endTime)){
+//            TODO:GIVE AN ERROR
+        }
+    }
 
     @Size(max = 255,message = "Etkinliğin Adı Bu Kadar Uzun Olamaz")
     @NotEmpty(message = "İsim Alanı Boş Bırakılamaz")
@@ -30,8 +42,8 @@ public class AddEventRequest {
     @NotEmpty(message = "Bitiş Tarihi Girilmek Zorunda")
     private final LocalDateTime endTime;
 
-    @Size(max = 255)
-    private final List<String> questions;
+//    @Size(max = 255) TODO: ADD QUESTIONS IN FUTURE
+//    private final List<String> questions;
 
     public Event toEvent(){
         return new Event(null,

@@ -1,8 +1,7 @@
-package yte.intern.project.common.configuration;
+package yte.intern.project.user.loginjwt.configuration;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 public class CustomUsernameAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-UsernamePasswordAuthenticationToken
+    // TODO: SAVED FOR FUTURE JWT APPLICATION
 }
