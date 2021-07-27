@@ -1,6 +1,6 @@
 import axios from "axios";
 import {MessageResponse} from "../../common/dto/MessageResponse";
-import {UserModel} from "../Login";
+import {UserLoginModel} from "../Login";
 
 export interface UserQueryResponse{
     username:string;
@@ -9,8 +9,9 @@ export interface UserQueryResponse{
 
 export class UserApi {
 
-    async Login(userModel: UserModel): Promise<MessageResponse> {
-        const response = await axios.post<MessageResponse>("/login",userModel);
+    async Login(userLoginModel: UserLoginModel): Promise<MessageResponse> {
+        console.log(userLoginModel.username);
+        const response = await axios.post<MessageResponse>("/login",userLoginModel);
         return response.data;
     }
 
