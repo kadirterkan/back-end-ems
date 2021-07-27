@@ -5,9 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import yte.intern.project.user.enumer.RoleEnum;
-import yte.intern.project.user.enumer.RolePermisionsEnum;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -24,8 +21,12 @@ public class Authority implements GrantedAuthority {
 
     private String name;
 
+    public Authority(String name) {
+        this.name = name;
+    }
+
     @ManyToMany(mappedBy = "authorities")
-    private Set<User> users;
+    private Set<AppUser> appUsers;
 
     @Override
     public String getAuthority() {

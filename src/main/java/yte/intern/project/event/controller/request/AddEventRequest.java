@@ -1,17 +1,16 @@
 package yte.intern.project.event.controller.request;
 
-import lombok.RequiredArgsConstructor;
-import yte.intern.project.event.entities.Event;
-import yte.intern.project.user.entities.User;
+import lombok.Getter;
+import yte.intern.project.event.entities.CustomEvent;
+import yte.intern.project.user.entities.AppUser;
 
 import javax.validation.constraints.Future;
-import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 
+@Getter
 public class AddEventRequest {
 
     public AddEventRequest(String eventName,
@@ -45,14 +44,11 @@ public class AddEventRequest {
 //    @Size(max = 255) TODO: ADD QUESTIONS IN FUTURE
 //    private final List<String> questions;
 
-    public Event toEvent(){
-        return new Event(null,
-                0L,
+    public CustomEvent toEvent(){
+        return new CustomEvent(quota,
                 eventName,
                 startTime,
                 endTime,
-//                questions, TODO: Sorular eklenecek
-                new HashSet<User>()
-                );
+                new HashSet<AppUser>());
     }
 }

@@ -3,60 +3,32 @@ package yte.intern.project.user.entities;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import yte.intern.project.event.entities.Event;
+import yte.intern.project.event.entities.CustomEvent;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class User implements UserDetails {
+@ToString
+public class AppUser implements UserDetails {
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setTcKimlikNumber(String tcKimlikNumber) {
-        this.tcKimlikNumber = tcKimlikNumber;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setAuthorities(Set<Authority> authorities) {
-        this.authorities = authorities;
-    }
-
-    public void setEventSet(Set<Event> eventSet) {
-        this.eventSet = eventSet;
-    }
-
-    public User(String username,
-                String firstName,
-                String lastName,
-                String tcKimlikNumber,
-                String email,
-                String password,
-                Set<Authority> authorities,
-                Set<Event> eventSet) {
+    public AppUser(String username,
+                   String firstName,
+                   String lastName,
+                   String tcKimlikNumber,
+                   String email,
+                   String password,
+                   Set<Authority> authorities,
+                   Set<CustomEvent> customEventSet) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -64,21 +36,22 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.authorities = authorities;
-        this.eventSet = eventSet;
+        this.customEventSet = customEventSet;
     }
 
-    public User(String username,
-                String firstName,
-                String lastName,
-                String tcKimlikNumber,
-                String email,
-                String password) {
+    public AppUser(String username,
+                   String firstName,
+                   String lastName,
+                   String tcKimlikNumber,
+                   String email,
+                   String password) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.tcKimlikNumber = tcKimlikNumber;
         this.email = email;
         this.password = password;
+        this.customEventSet = new HashSet<CustomEvent>();
     }
 
     @Id
@@ -107,7 +80,7 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "USER_ID"),
             inverseJoinColumns = @JoinColumn(name = "EVENT_ID")
     )
-    private Set<Event> eventSet;
+    private Set<CustomEvent> customEventSet;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -135,8 +108,13 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void AddEventToUser(Event event){
-        eventSet.add(event);
+    public boolean AddEventToUser(CustomEvent customEvent){
+        return customEventSet.add(customEvent);
     }
+
+    public boolean addAuthorityToUser(Authority authority){
+        return authorities.add(authority);
+    }
+
 
 }

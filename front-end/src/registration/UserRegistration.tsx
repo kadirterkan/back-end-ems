@@ -1,5 +1,11 @@
-import {TextField} from "@material-ui/core";
+import {Button, TextField} from "@material-ui/core";
 import {ChangeEvent, useState} from "react";
+import {MessageType} from "../common/dto/MessageResponse";
+import {toast} from "react-toastify";
+import {UserRegistrationApi} from "./api/UserRegistrationAPI";
+
+
+
 
 interface Props{
     addUser: (model: UserModel) => void
@@ -24,6 +30,18 @@ const initialState: UserModel = {
 export function UserRegistration(props: Props){
 
     const [userModel, setUserModel] = useState<UserModel>(initialState);
+
+    const userRegistrationApi = new UserRegistrationApi();
+
+    const addUser = async (model:UserModel) => {
+        console.log("TEST");
+        const messageResponse = await userRegistrationApi.addUser(model);
+        if(messageResponse.messageType === MessageType.SUCCESS){
+            toast.success(messageResponse.message);
+        } else {
+            toast.error(messageResponse.message);
+        }
+    }
 
     const onFormChange = (event: ChangeEvent<HTMLInputElement>) => {
         const field = event.target.name;
@@ -54,16 +72,26 @@ export function UserRegistration(props: Props){
         return newUserModelState;
     }
 
+    const Submit = () => {
+        return(
+            <div className={"button"}>
+                <Button onClick={() => addUser(userModel)}
+                        color={"primary"}>Submit</Button>
+            </div>
+        )
+    }
+
 
     return(
         <form className={"entity"} noValidate autoComplete="off">
             <div>
-                <TextField id="firstName" label="First Name" />
-                <TextField id="lastName" label="Last Name" />
-                <TextField id="tcKimlikNumber" label="TC NO" />
-                <TextField id="email" label="Email" />
-                <TextField id="password" label="Password" />
-            </div>
+                <TextField onChange={onFormChange} name="firstName" label="First Name" />
+                <TextField onChange={onFormChange} name="lastName" label="Last Name" />
+                <TextField onChange={onFormChange} name="tcKimlikNumber" label="TC NO" />
+                <TextField onChange={onFormChange} name="email" label="Email" />
+                <TextField onChange={onFormChange} name="password" label="Password" />
+        </div>
+            <Submit/>
         </form>
     );
 }

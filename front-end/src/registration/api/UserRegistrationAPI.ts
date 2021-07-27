@@ -10,7 +10,7 @@ export interface UserQueryResponse{
     password:string;
 }
 
-export class UserApi {
+export class UserRegistrationApi {
 
     async addUser(userModel: UserModel): Promise<MessageResponse> {
         const response = await axios.post<MessageResponse>("/registration",userModel);

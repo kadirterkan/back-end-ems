@@ -3,9 +3,10 @@ package yte.intern.project.user.registration.request;
 
 import lombok.RequiredArgsConstructor;
 
-import yte.intern.project.event.entities.Event;
+import lombok.ToString;
+import yte.intern.project.event.entities.CustomEvent;
+import yte.intern.project.user.entities.AppUser;
 import yte.intern.project.user.entities.Authority;
-import yte.intern.project.user.entities.User;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -13,7 +14,9 @@ import javax.validation.constraints.Size;
 import java.util.HashSet;
 
 @RequiredArgsConstructor
+@ToString
 public class RegisterRequest {
+
     public String getFirstName() {
         return firstName;
     }
@@ -55,15 +58,15 @@ public class RegisterRequest {
     @Size(max = 11,min = 11)
     private final String tcKimlikNumber;
 
-    public User toUser(){
-        return new User(firstName+"."+lastName,
+    public AppUser toUser(){
+        return new AppUser(firstName+"."+lastName,
                 firstName,
                 lastName,
                 tcKimlikNumber,
                 email,
                 password,
                 new HashSet<Authority>(),
-                new HashSet<Event>());
+                new HashSet<CustomEvent>());
     }
 
 }

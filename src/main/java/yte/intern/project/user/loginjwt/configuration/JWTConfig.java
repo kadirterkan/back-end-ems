@@ -18,12 +18,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+
 @NoArgsConstructor
 @Component
 public class JWTConfig extends OncePerRequestFilter {
 
 
-    @Value("${security.jwt.secret-key}")
+    @Value("SOMESECRETCODEABOUTTHISJAVASPRINGBOOTAPPLICATIONYOUMAYNOTSOLVETHISFORGODSSAKE")
     private String SecretKey;
 
     private UserService userService;
@@ -50,4 +51,5 @@ public class JWTConfig extends OncePerRequestFilter {
         }
         filterChain.doFilter(request,response);
     }
+
 }

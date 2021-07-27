@@ -2,7 +2,7 @@ package yte.intern.project.user.controller.request;
 
 
 import lombok.RequiredArgsConstructor;
-import yte.intern.project.user.entities.User;
+import yte.intern.project.user.entities.AppUser;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -32,8 +32,8 @@ public class UpdateUserRequest {
     @Size(max = 11,min = 11)
     private final String tcKimlikNumber;
 
-    public User toUser(){
-        return new User(firstName+"."+lastName,
+    public AppUser toUser(){
+        return new AppUser(firstName+"."+lastName,
                 firstName,
                 lastName,
                 tcKimlikNumber,
