@@ -1,9 +1,11 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Button, TextField} from "@material-ui/core";
-import {UserApi} from "./api/LoginAPI";
+import {LoginApi} from "./api/LoginAPI";
 import {MessageType} from "../common/dto/MessageResponse";
 import {toast} from "react-toastify";
 import Cookies from "js-cookie";
+import axios from "axios";
+import {useHistory,BrowserRouter,Redirect, Route} from "react-router-dom";
 
 
 export interface UserLoginModel{
@@ -12,45 +14,65 @@ export interface UserLoginModel{
 }
 
 const initialState: UserLoginModel = {
-    username: "",
-    password: ""
+    username: "ADMIN",
+    password: "root"
 };
 
 
-export function Login(){
+export function Login() {
 
     let isValid = true;
 
-    const userApi = new UserApi();
+    const history = useHistory();
 
+    const loginApi = new LoginApi();
+
+    const loggedIn = async() => {
+        let response = await loginApi.loggedIn();
+
+        if (response) {
+            setUserLoggedIn(true);
+        }
+
+    }
+
+    loggedIn();
+
+    const [userLoggedIn, setUserLoggedIn] = useState(false);
     const [userLoginModel, setUserLoginModel] = useState<UserLoginModel>(initialState);
 
+
+
     const userLogin = async (model: UserLoginModel) => {
-        const messageResponse = await userApi.Login(model);
-        console.log(messageResponse.messageType);
-        if(messageResponse.messageType === MessageType.SUCCESS){
-            isValid=true;
+        const messageResponse = await loginApi.Login(model);
+        console.log(messageResponse.message);
+        if (messageResponse.messageType === MessageType.SUCCESS) {
+            isValid = true;
             toast.success("SUCCESFULLY LOGGED IN");
-            Cookies.set("Authentication",messageResponse.message);
+            history.push('/');
+            Cookies.set("Authentication", messageResponse.message);
         } else {
-            isValid=false;
+            isValid = false;
             toast.error(messageResponse.message);
         }
     }
+
+
 
     const onFormChange = (event: ChangeEvent<HTMLInputElement>) => {
         const field = event.target.name;
         const value = event.target.value;
 
-        setUserLoginModel(updateFormState(field,value));
+        setUserLoginModel(updateFormState(field, value));
     }
 
-    function updateFormState(field: string, value: string){
+    function updateFormState(field: string, value: string) {
         const newModelState = {...userLoginModel};
-        switch(field){
+        switch (field) {
             case "username":
                 console.log(value);
                 userLoginModel.username = value;
+                setUserLoggedIn(true);
                 break;
             case "password":
                 console.log(value);
@@ -61,7 +83,7 @@ export function Login(){
     }
 
     let UsernameField = () => {
-        return(
+        return (
             <div>
                 <TextField
                     onChange={onFormChange}
@@ -73,7 +95,7 @@ export function Login(){
     }
 
     const ErrorUsernameField = () => {
-        return(
+        return (
             <div>
                 <TextField
                     onChange={onFormChange}
@@ -88,7 +110,7 @@ export function Login(){
     }
 
     let PasswordField = () => {
-        return(
+        return (
             <div>
                 <TextField onChange={onFormChange} name="password" label="Password"/>
             </div>
@@ -96,7 +118,7 @@ export function Login(){
     }
 
     const ErrorPasswordField = () => {
-        return(
+        return (
             <div>
                 <TextField
                     onChange={onFormChange}
@@ -112,7 +134,7 @@ export function Login(){
     }
 
     const LoginButton = () => {
-        return(
+        return (
             <div>
                 <Button onClick={() => userLogin(userLoginModel)}
                         color={"primary"}
@@ -125,14 +147,14 @@ export function Login(){
 
     return (
         <form className={"entity"} noValidate autoComplete="off">
-                <div className={"field-containers"}>
-                    <TextField
-                        onChange={onFormChange}
-                        name="username"
-                        label="Username"
-                    />
-                    <TextField onChange={onFormChange} name="password" label="Password" />
-                </div>
+            <div className={"field-containers"}>
+                <TextField
+                    onChange={onFormChange}
+                    name="username"
+                    label="Username"
+                />
+                <TextField onChange={onFormChange} name="password" label="Password"/>
+            </div>
             <LoginButton/>
         </form>
     );

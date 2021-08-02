@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import yte.intern.project.user.entities.Authority;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -27,7 +28,16 @@ public class JWTUtil {
     public static String generateToken(Authentication user, String key){
         return Jwts.builder()
                 .setSubject(user.getName())
-                .claim("authorities", user.getAuthorities())
+                .claim("authorities", getAuthorities(user))
+                .setExpiration(getExperationDate())
+                .signWith(Keys.hmacShaKeyFor(key.getBytes()))
+                .compact();
+    }
+
+    public static String generateTokenForGuest(Authority authority, String key){
+        return Jwts.builder()
+                .setSubject("guest")
+                .claim("authorities",authority.getAuthority())
                 .setExpiration(getExperationDate())
                 .signWith(Keys.hmacShaKeyFor(key.getBytes()))
                 .compact();

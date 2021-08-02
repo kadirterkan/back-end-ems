@@ -10,14 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yte.intern.project.common.dto.MessageResponse;
 import yte.intern.project.common.enums.MessageType;
-import yte.intern.project.event.entities.CustomEvent;
-import yte.intern.project.event.service.CustomEventService;
 import yte.intern.project.user.entities.AppUser;
 import yte.intern.project.user.entities.Authority;
 import yte.intern.project.user.registration.request.RegisterRequest;
 import yte.intern.project.user.repository.UserRepository;
 
-import javax.annotation.PostConstruct;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -43,14 +40,13 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final AuthorityService authorityService;
-    private final CustomEventService customEventService;
+
 
     @Autowired
-    public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository, AuthorityService authorityService, CustomEventService customEventService) {
+    public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository, AuthorityService authorityService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.authorityService = authorityService;
-        this.customEventService = customEventService;
     }
 
 
@@ -63,6 +59,11 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUserId(Long id) throws Exception {
         return userRepository.findById(id)
                 .orElseThrow(()->new Exception("Kullanıcı Bulunamadı"));
+    }
+
+    public AppUser bringUser(String username) throws UsernameNotFoundException{
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("USER NOT FOUND"));
     }
 
     public void updateUser(AppUser appUser){
@@ -100,6 +101,8 @@ public class UserService implements UserDetailsService {
         Optional<AppUser> appUser =  userRepository.findByUsername(userName);
         if(appUser.isPresent()){
             Authority authority = authorityService.loadAuthorityByName(authorityName);
+//            AppUser oldRef = userRepository.getById(appUser.get().getId());
+//            oldRef.addAuthorityToUser(authority);
             appUser.get().addAuthorityToUser(authority);
             userRepository.save(appUser.get());
             return new MessageResponse(SUCCESS,
@@ -112,27 +115,6 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public MessageResponse addEventToUser(String userName,String eventName){
-        Optional<AppUser> appUser = userRepository.findByUsername(userName);
-        if(appUser.isPresent()){
-            Optional<CustomEvent> customEvent = customEventService.loadByEventName(eventName);
-            if(customEvent.isPresent()){
-                appUser.get().AddEventToUser(customEvent.get());
-                userRepository.save(appUser.get());
-                return new MessageResponse(SUCCESS,
-                        EVENT_ADDED_SUCCESSFULLY.formatted(eventName,
-                                appUser.get().getTcKimlikNumber()));
-            }
-            else {
-                return new MessageResponse(ERROR,
-                        EVENT_DOESNT_EXIST.formatted(eventName));
-            }
-        }
-        else{
-            return new MessageResponse(ERROR,
-                    USER_DOESNT_EXIST.formatted(userName));
-        }
-    }
 
     public boolean userExistswithUsername(String username){
         return userRepository.existsByUsername(username);
@@ -142,8 +124,9 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
+    @Transactional
     public MessageResponse AddUserToDb(AppUser appUser){
-        if(userRepository.existsByUsername(appUser.getUsername())){
+        if(!userRepository.existsByUsername(appUser.getUsername())){
             userRepository.save(appUser);
             return new MessageResponse(SUCCESS,
                     USER_ADDED_SUCCESSFULLY.formatted(appUser.getTcKimlikNumber()));

@@ -10,6 +10,7 @@ import yte.intern.project.user.controller.request.UpdateAuthorityRequest;
 import yte.intern.project.user.entities.AppUser;
 import yte.intern.project.user.service.UserService;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController

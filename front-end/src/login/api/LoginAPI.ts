@@ -7,7 +7,7 @@ export interface UserQueryResponse{
     password:string;
 }
 
-export class UserApi {
+export class LoginApi {
 
     async Login(userLoginModel: UserLoginModel): Promise<MessageResponse> {
         console.log(userLoginModel.username);
@@ -15,4 +15,13 @@ export class UserApi {
         return response.data;
     }
 
+    async loggedIn():Promise<boolean> {
+        const response = await axios.get<boolean>("/logged");
+        return response.data;
+    }
+
+    async getName():Promise<string> {
+        const response = await axios.get<string>("getname");
+        return response.data;
+    }
 }

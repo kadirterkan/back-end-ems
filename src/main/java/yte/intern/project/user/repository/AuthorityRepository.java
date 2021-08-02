@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AuthorityRepository extends JpaRepository<Authority,Long> {
-    boolean existsByName(String name);
+    boolean existsByAuthority(String name);
 
     @Override
     Optional<Authority> findById(Long aLong);
 
-    Optional<Authority> findByName(String name);
+    Optional<Authority> findByAuthority(String name);
 
 }

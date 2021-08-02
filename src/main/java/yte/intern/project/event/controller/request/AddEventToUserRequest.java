@@ -10,13 +10,10 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Getter
-public class UpdateEventRequest {
-
-
+public class AddEventToUserRequest {
     @Size(max = 255,message = "Etkinliğin Adı Bu Kadar Uzun Olamaz")
     @NotEmpty(message = "İsim Alanı Boş Bırakılamaz")
     private final String eventName;
@@ -31,13 +28,5 @@ public class UpdateEventRequest {
 
 //    private final List<String> questions;
 
-    public CustomEvent toEvent(AppUser creator){
-        return new CustomEvent(
-                quota,
-                eventName,
-                creator,
-                startTime,
-                endTime,
-                new HashSet<AppUser>());
-    }
+
 }

@@ -1,5 +1,5 @@
 import {AuthorityAdd} from "../UserAuthorityAdd";
-import {MessageResponse} from "../../common/dto/MessageResponse";
+import {MessageResponse} from "../../../common/dto/MessageResponse";
 import axios from "axios";
 
 export class UserAuthorityAdder{

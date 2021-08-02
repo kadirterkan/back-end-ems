@@ -1,20 +1,18 @@
 package yte.intern.project.user.entities;
 
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import yte.intern.project.event.entities.CustomEvent;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Getter
 @Setter
 @NoArgsConstructor
 @ToString
@@ -65,7 +63,7 @@ public class AppUser implements UserDetails {
     private String email;
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "USER_AUTHORITIES",
             joinColumns = @JoinColumn(name = "USER_ID"),
@@ -82,11 +80,31 @@ public class AppUser implements UserDetails {
     )
     private Set<CustomEvent> customEventSet;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+    @OneToMany(mappedBy = "createdBy")
+    private Set<CustomEvent> createdEvents;
+
+
+    public Collection<Authority> getAuthorities() {
+        return authorities;
     }
 
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    public Long getId() {
+        return Id;
+    }
+
+    public String getTcKimlikNumber() {
+        return tcKimlikNumber;
+    }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -108,12 +126,17 @@ public class AppUser implements UserDetails {
         return true;
     }
 
-    public boolean AddEventToUser(CustomEvent customEvent){
-        return customEventSet.add(customEvent);
+    public void AddEventToUser(CustomEvent customEvent){
+        customEventSet.add(customEvent);
     }
 
     public boolean addAuthorityToUser(Authority authority){
         return authorities.add(authority);
+    }
+
+    @PostConstruct
+    private void Event(){
+        this.createdEvents = new HashSet<CustomEvent>();
     }
 
 

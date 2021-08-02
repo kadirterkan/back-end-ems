@@ -2,19 +2,13 @@ package yte.intern.project.user.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import yte.intern.project.user.entities.AppUser;
 import yte.intern.project.user.entities.Authority;
 import yte.intern.project.user.repository.AuthorityRepository;
-import yte.intern.project.user.repository.UserRepository;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class AuthorityService {
@@ -27,27 +21,35 @@ public class AuthorityService {
     }
 
     public Authority loadAuthorityByName(String authorityName) throws Exception {
-        return authorityRepository.findByName(authorityName)
+        return authorityRepository.findByAuthority(authorityName)
                 .orElseThrow(() -> new Exception("AUTHORITY NOT FOUND"));
+    }
+
+    public Authority updateAuthority(Authority newAuthority){
+        return authorityRepository.save(newAuthority);
     }
 
     public void AdminAuthorityAdderToDb(){
         if(doesntExist("ADMIN")){
-            Authority admin = new Authority("ADMIN");
+            Authority admin = new Authority(null,"ADMIN",new HashSet<>());
             authorityRepository.save(admin);
         }
         if(doesntExist("USER")){
-            Authority user = new Authority("USER");
+            Authority user = new Authority(null,"USER",new HashSet<>());
             authorityRepository.save(user);
         }
-        if(doesntExist("MOD")){
-            Authority moderator = new Authority("MOD");
+        if(doesntExist("MODERATOR")){
+            Authority moderator = new Authority(null,"MODERATOR",new HashSet<>());
             authorityRepository.save(moderator);
+        }
+        if(doesntExist("GUEST")){
+            Authority guest = new Authority(null,"GUEST",new HashSet<>());
+            authorityRepository.save(guest);
         }
     }
 
     private boolean doesntExist(String name){
-        return !authorityRepository.existsByName(name);
+        return !authorityRepository.existsByAuthority(name);
     }
 
     public Set<Authority> getAllAuthoritiesSet(){

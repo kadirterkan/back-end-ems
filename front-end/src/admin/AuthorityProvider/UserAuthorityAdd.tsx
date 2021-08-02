@@ -1,9 +1,7 @@
 import {Button, FormControl, FormHelperText, InputLabel, NativeSelect, TextField} from "@material-ui/core";
-import {ChangeEvent, useState} from "react";
-import classes from "*.module.css";
-import {MessageType} from "../common/dto/MessageResponse";
+import { useState} from "react";
+import {MessageType} from "../../common/dto/MessageResponse";
 import {toast} from "react-toastify";
-import Cookies from "js-cookie";
 import {UserAuthorityAdder} from "./api/UserAuthorityAddApi";
 
 
@@ -42,7 +40,7 @@ export function UserAuthorityAdd(){
         setModel(newSetModel);
     };
 
-    const handleText = (event: React.ChangeEvent<{value:string}>) => {
+    const handleText = (event: React.ChangeEvent<{value: string}>) => {
         let newSetModel = {...model};
 
         newSetModel.username = event.target.value;
@@ -60,7 +58,7 @@ export function UserAuthorityAdd(){
                     <TextField onChange={handleText} name={"username"} label={"Username"}></TextField>
                 </div>
             </form>
-            <FormControl className={classes.formControl}>
+            <FormControl className={"form-control"}>
                 <InputLabel >
                     Authorities
                 </InputLabel>

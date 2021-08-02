@@ -18,17 +18,13 @@ import yte.intern.project.user.loginjwt.configuration.JWTConfig;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-
     private final JWTConfig jwtConfig;
-
-
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/login","/registration","/home").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("/login","/registration","/home","/guest").permitAll()
                 .and()
                 .csrf().disable()
                 .sessionManagement()

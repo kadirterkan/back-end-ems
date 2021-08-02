@@ -3,8 +3,10 @@ package yte.intern.project.event.controller.request;
 import lombok.Getter;
 import yte.intern.project.event.entities.CustomEvent;
 import yte.intern.project.user.entities.AppUser;
+import yte.intern.project.user.loginjwt.jwt.JWTUtil;
 
 import javax.validation.constraints.Future;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -30,25 +32,24 @@ public class AddEventRequest {
     @NotEmpty(message = "İsim Alanı Boş Bırakılamaz")
     private final String eventName;
 
-    @NotEmpty(message = "Kontenjan Kısmı Boş Bırakılamaz")
     private final Long quota;
 
     @Future
-    @NotEmpty(message = "Başlangıç Tarihi Girilmek Zorunda")
     private final LocalDateTime startTime;
 
     @Future
-    @NotEmpty(message = "Bitiş Tarihi Girilmek Zorunda")
     private final LocalDateTime endTime;
 
 //    @Size(max = 255) TODO: ADD QUESTIONS IN FUTURE
 //    private final List<String> questions;
 
-    public CustomEvent toEvent(){
+    public CustomEvent toEvent(AppUser creator){
         return new CustomEvent(quota,
                 eventName,
+                creator,
                 startTime,
                 endTime,
                 new HashSet<AppUser>());
     }
+
 }
