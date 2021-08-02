@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
-import {BrowserRouter, Route, Link} from "react-router-dom";
+import {BrowserRouter, Route, Link, useLocation} from "react-router-dom";
 import {UserRegistration} from "./registration/UserRegistration";
 import {Login} from "./login/Login";
 import {AdminView} from "./admin/AdminView";
@@ -8,34 +8,25 @@ import {ModView} from "./moderator/ModView";
 import {LoginApi} from "./login/api/LoginAPI";
 import {Logout} from "./logout/Logout";
 import {EventView} from "./view/EventView";
-import {Button} from "@material-ui/core";
 import {toast} from "react-toastify";
-import axios from "axios";
 import 'react-toastify/dist/ReactToastify.css';
-import Cookies from "js-cookie";
-import {MessageResponse, MessageType} from "./common/dto/MessageResponse";
 
+
+function OnURLChange(){
+    let location = useLocation();
+
+    useEffect(() => {
+
+    },[location])
+
+}
 
 
 function App() {
 
+    // const location = useLocation();
+
     toast.configure();
-
-    // const getGuestPermission = async() => {
-    //     const response = await axios.get<MessageResponse>("/guest");
-    //     if(response.data.messageType === MessageType.SUCCESS){
-    //         Cookies.set("Authentication",response.data.message);
-    //     }
-    //     else {
-    //         toast.error("SOME ERROR OCCURRED. PLEASE RELOAD THE PAGE");
-    //     }
-    // }
-
-
-
-    const workworkwork = () => {
-        toast.success("HEY THERE");
-    }
 
     const [logged,setLogged] = useState(false);
 
@@ -50,15 +41,7 @@ function App() {
         }
     }
 
-    // const ifNotLogged = () => {
-    //     if(!logged){
-    //         getGuestPermission();
-    //     }
-    // }
 
-    // ifNotLogged();
-
-    loggedIn();
 
   return (
       <div>
@@ -86,6 +69,7 @@ function App() {
                       <Link className={"navigation-link"} to={"/login"}>Login</Link>
                       <Link className={"navigation-link"} to={"/admin"}>Admin</Link>
                       <Link className={"navigation-link"} to={"/mod"}>Mod</Link>
+                      <Link className={"navigation-link"} to={"/list"}>Event List</Link>
                   </div>
               </div>
 
@@ -94,10 +78,10 @@ function App() {
                   <Route path={"/login"} exact={true} component={Login}/>
                   <Route path={"/admin"} exact={true} component={AdminView}/>
                   <Route path={"/mod"} exact={true} component={ModView}/>
+                  <Route path={"/list"} exact={true} component={EventView}/>
               </div>
           </BrowserRouter>
       }
-      <Button onClick={workworkwork}>CLICK</Button>
       </div>
   );
 }

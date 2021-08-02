@@ -6,6 +6,7 @@ import {toast} from "react-toastify";
 import {Button} from "@material-ui/core";
 import {ModEventList} from "./EventList/ModEventList";
 import {GridRowParams} from "@material-ui/data-grid";
+import {EventEdit} from "./EventEdit/ModEventEdit";
 
 const initialstate: EventModel = {
     quota:0,
@@ -17,6 +18,8 @@ const initialstate: EventModel = {
 
 export function ModView(){
     const [isAddEventModelOpen, setAddEventModelOpen] = useState(false);
+    const [isEditEventModelOpen, setIsEditEventModelOpen] = useState(false);
+
     const [eventQueryResponses, setEventQueryResponses] = useState<EventQueryResponse[]>([]);
 
     const [selectedItem,setSelectedItem] = useState(false);
@@ -69,6 +72,10 @@ export function ModView(){
                         handleClose={() => setAddEventModelOpen(false)}
                         addEvent={addEvent}
                         />
+            <EventEdit isOpen={isEditEventModelOpen}
+                       handleClose={() => setIsEditEventModelOpen(false)}
+                       addEvent={addEvent}
+                       oldEventModel={selected}/>
             <ModEventList events={eventQueryResponses} selected={(value) => whenSelected(value)} selectedItem={(value) => setSelectedItem(value)}/>
         </div>
     );

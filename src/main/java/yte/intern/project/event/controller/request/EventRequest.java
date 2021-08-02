@@ -2,20 +2,17 @@ package yte.intern.project.event.controller.request;
 
 import lombok.Getter;
 import yte.intern.project.event.entities.CustomEvent;
-import yte.intern.project.user.entities.AppUser;
-import yte.intern.project.user.loginjwt.jwt.JWTUtil;
+import yte.intern.project.user.entities.BaseUser;
 
 import javax.validation.constraints.Future;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 
 @Getter
-public class AddEventRequest {
+public class EventRequest {
 
-    public AddEventRequest(String eventName,
+    public EventRequest(String eventName,
                            Long quota,
                            LocalDateTime startTime,
                            LocalDateTime endTime) {
@@ -28,8 +25,7 @@ public class AddEventRequest {
         }
     }
 
-    @Size(max = 255,message = "Etkinliğin Adı Bu Kadar Uzun Olamaz")
-    @NotEmpty(message = "İsim Alanı Boş Bırakılamaz")
+    @NotEmpty
     private final String eventName;
 
     private final Long quota;
@@ -40,16 +36,14 @@ public class AddEventRequest {
     @Future
     private final LocalDateTime endTime;
 
-//    @Size(max = 255) TODO: ADD QUESTIONS IN FUTURE
-//    private final List<String> questions;
-
-    public CustomEvent toEvent(AppUser creator){
-        return new CustomEvent(quota,
-                eventName,
+    public CustomEvent toEvent(BaseUser creator){
+        return new CustomEvent(
+                this.quota,
+                this.eventName,
                 creator,
-                startTime,
-                endTime,
-                new HashSet<AppUser>());
+                this.startTime,
+                this.endTime,
+                new HashSet<>()
+        );
     }
-
 }

@@ -1,4 +1,4 @@
-package yte.intern.project.user.loginjwt.jwt;
+package yte.intern.project.user.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

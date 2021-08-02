@@ -21,6 +21,6 @@ public class EventQueryResponse {
         this.startTime=customEvent.getStartTime();
         this.endTime=customEvent.getEndTime();
         this.quota= customEvent.getQuota();
-        this.attending= (long) customEvent.getAppUserSet().size();
+        this.attending= (long) customEvent.getBaseUserSet().size();
     }
 }

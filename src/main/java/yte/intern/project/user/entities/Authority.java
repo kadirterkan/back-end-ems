@@ -17,8 +17,8 @@ public class Authority implements GrantedAuthority {
         return authority;
     }
 
-    public Set<AppUser> getAppUsers() {
-        return appUsers;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
     @Id
@@ -29,5 +29,5 @@ public class Authority implements GrantedAuthority {
 
 
     @ManyToMany(fetch = FetchType.EAGER,mappedBy = "authorities")
-    private Set<AppUser> appUsers;
+    private Set<Role> roles;
 }

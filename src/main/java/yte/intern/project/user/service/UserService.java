@@ -10,15 +10,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yte.intern.project.common.dto.MessageResponse;
 import yte.intern.project.common.enums.MessageType;
-import yte.intern.project.user.entities.AppUser;
+import yte.intern.project.event.entities.CustomEvent;
+import yte.intern.project.user.entities.SimpleUser;
 import yte.intern.project.user.entities.Authority;
-import yte.intern.project.user.registration.request.RegisterRequest;
-import yte.intern.project.user.repository.UserRepository;
+import yte.intern.project.user.controller.request.SimpleUserRequest;
+import yte.intern.project.user.repository.ModeratorRepository;
+import yte.intern.project.user.repository.SimpleUserRepository;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static yte.intern.project.common.enums.MessageType.ERROR;
 import static yte.intern.project.common.enums.MessageType.SUCCESS;
@@ -38,75 +38,74 @@ public class UserService implements UserDetailsService {
 
 
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+    private final SimpleUserRepository simpleUserRepository;
+    private final ModeratorRepository moderatorRepository;
     private final AuthorityService authorityService;
 
 
     @Autowired
-    public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository, AuthorityService authorityService) {
+    public UserService(PasswordEncoder passwordEncoder, SimpleUserRepository simpleUserRepository, ModeratorRepository moderatorRepository, AuthorityService authorityService) {
         this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
+        this.simpleUserRepository = simpleUserRepository;
+        this.moderatorRepository = moderatorRepository;
         this.authorityService = authorityService;
     }
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username)
+        return simpleUserRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Kullanıcı Bulunamadı"));
     }
 
     public UserDetails loadUserByUserId(Long id) throws Exception {
-        return userRepository.findById(id)
+        return simpleUserRepository.findById(id)
                 .orElseThrow(()->new Exception("Kullanıcı Bulunamadı"));
     }
 
-    public AppUser bringUser(String username) throws UsernameNotFoundException{
-        return userRepository.findByUsername(username)
+    public SimpleUser bringUser(String username) throws UsernameNotFoundException{
+        return simpleUserRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("USER NOT FOUND"));
     }
 
-    public void updateUser(AppUser appUser){
-        userRepository.save(appUser);
+    public void updateUser(SimpleUser simpleUser){
+        simpleUserRepository.save(simpleUser);
     }
 
 
-    public MessageResponse newUserRegistration(RegisterRequest registerRequest) throws Exception{
-        if(userRepository.existsByTcKimlikNumber(registerRequest.getTcKimlikNumber())){
+    public MessageResponse newSimpleUserRegistration(SimpleUserRequest simpleUserRequest) throws Exception{
+        if(simpleUserRepository.existsByTcKimlikNumber(simpleUserRequest.getTcKimlikNumber())){
             System.out.println("EXISTS");
             return new MessageResponse(MessageType.ERROR,
-                    USER_ALREADY_EXISTS.formatted(registerRequest.getTcKimlikNumber()));
+                    USER_ALREADY_EXISTS.formatted(simpleUserRequest.getTcKimlikNumber()));
         }
         else{
+            String username = simpleUserRequest.getFirstName()+"."+ simpleUserRequest.getLastName();
+            SimpleUser simpleUser = new SimpleUser(username,
+                    simpleUserRequest.getFirstName(),
+                    simpleUserRequest.getLastName(),
+                    simpleUserRequest.getTcKimlikNumber(),
+                    simpleUserRequest.getEmail(),
+                    passwordEncoder.encode(simpleUserRequest.getPassword()));
 
-            AppUser appUser = new AppUser();
-            appUser.setEmail(registerRequest.getEmail());
-            appUser.setUsername(registerRequest.getFirstName()+"."+registerRequest.getLastName());
-            appUser.setFirstName(registerRequest.getFirstName());
-            appUser.setLastName(registerRequest.getLastName());
-            appUser.setTcKimlikNumber(registerRequest.getTcKimlikNumber());
-            appUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-            appUser.setAuthorities(new HashSet<Authority>(Set.of(authorityService.loadAuthorityByName("USER"))));
 
-            System.out.println(appUser);
-
-            userRepository.save(appUser);
+            simpleUserRepository.save(simpleUser);
 
             return new MessageResponse(SUCCESS,
-                    USER_ADDED_SUCCESSFULLY.formatted(registerRequest.getTcKimlikNumber()));
+                    USER_ADDED_SUCCESSFULLY.formatted(simpleUserRequest.getTcKimlikNumber()));
         }
     }
 
     public MessageResponse addAuthorityToUser(String userName, String authorityName) throws Exception {
-        Optional<AppUser> appUser =  userRepository.findByUsername(userName);
-        if(appUser.isPresent()){
+        Optional<SimpleUser> simpleAppUser =  simpleUserRepository.findByUsername(userName);
+        if(simpleAppUser.isPresent()){
             Authority authority = authorityService.loadAuthorityByName(authorityName);
-//            AppUser oldRef = userRepository.getById(appUser.get().getId());
+//            AppUser oldRef = userRepository.getById(simpleAppUser.get().getId());
 //            oldRef.addAuthorityToUser(authority);
-            appUser.get().addAuthorityToUser(authority);
-            userRepository.save(appUser.get());
+//            simpleAppUser.get().addAuthorityToUser(authority);
+            simpleUserRepository.save(simpleAppUser.get());
             return new MessageResponse(SUCCESS,
-                    AUTHORITY_ADDED_SUCCESSFULLY.formatted(appUser.get().getTcKimlikNumber(),
+                    AUTHORITY_ADDED_SUCCESSFULLY.formatted(simpleAppUser.get().getTcKimlikNumber(),
                             authorityName));
         }
         else{
@@ -117,23 +116,27 @@ public class UserService implements UserDetailsService {
 
 
     public boolean userExistswithUsername(String username){
-        return userRepository.existsByUsername(username);
+        return simpleUserRepository.existsByUsername(username);
     }
 
-    public List<AppUser> getAllUsers(){
-        return userRepository.findAll();
+    public List<SimpleUser> getAllUsers(){
+        return simpleUserRepository.findAll();
     }
 
     @Transactional
-    public MessageResponse AddUserToDb(AppUser appUser){
-        if(!userRepository.existsByUsername(appUser.getUsername())){
-            userRepository.save(appUser);
+    public MessageResponse AddUserToDb(SimpleUser simpleUser){
+        if(!simpleUserRepository.existsByUsername(simpleUser.getUsername())){
+            simpleUserRepository.save(simpleUser);
             return new MessageResponse(SUCCESS,
-                    USER_ADDED_SUCCESSFULLY.formatted(appUser.getTcKimlikNumber()));
+                    USER_ADDED_SUCCESSFULLY.formatted(simpleUser.getTcKimlikNumber()));
         }
         else{
             return new MessageResponse(ERROR,
-                    USER_ALREADY_EXISTS.formatted(appUser.getTcKimlikNumber()));
+                    USER_ALREADY_EXISTS.formatted(simpleUser.getTcKimlikNumber()));
         }
+    }
+
+    public boolean joinedThisEvent(SimpleUser simpleUser, CustomEvent customEvent){
+        return !simpleUserRepository.existsAppUserByCustomEventSetContains(customEvent);
     }
 }

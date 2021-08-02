@@ -1,4 +1,4 @@
-package yte.intern.project.user.loginjwt.configuration;
+package yte.intern.project.user.configuration;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

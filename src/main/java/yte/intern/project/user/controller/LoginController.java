@@ -1,15 +1,12 @@
-package yte.intern.project.user.loginjwt.controller;
+package yte.intern.project.user.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import yte.intern.project.common.dto.MessageResponse;
-import yte.intern.project.user.loginjwt.request.LoginRequest;
-import yte.intern.project.user.loginjwt.service.LoginService;
-
-import java.security.Principal;
+import yte.intern.project.user.controller.request.LoginRequest;
+import yte.intern.project.user.service.LoginService;
 
 @RestController
 public class LoginController {

@@ -4,9 +4,12 @@ import {LoginApi} from "./api/LoginAPI";
 import {MessageType} from "../common/dto/MessageResponse";
 import {toast} from "react-toastify";
 import Cookies from "js-cookie";
-import axios from "axios";
-import {useHistory,BrowserRouter,Redirect, Route} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 
+
+export interface Props{
+    isLoggedIn:(value:boolean) => void;
+}
 
 export interface UserLoginModel{
     username: string;
@@ -14,12 +17,12 @@ export interface UserLoginModel{
 }
 
 const initialState: UserLoginModel = {
-    username: "ADMIN",
-    password: "root"
+    username: "",
+    password: ""
 };
 
 
-export function Login() {
+export function Login(props: Props) {
 
     let isValid = true;
 
@@ -51,6 +54,7 @@ export function Login() {
             toast.success("SUCCESFULLY LOGGED IN");
             history.push('/');
             Cookies.set("Authentication", messageResponse.message);
+            // props.isLoggedIn(true);
         } else {
             isValid = false;
             toast.error(messageResponse.message);
@@ -71,12 +75,12 @@ export function Login() {
         switch (field) {
             case "username":
                 console.log(value);
-                userLoginModel.username = value;
+                newModelState.username = value;
                 setUserLoggedIn(true);
                 break;
             case "password":
                 console.log(value);
-                userLoginModel.password = value;
+                newModelState.password = value;
                 break;
         }
         return newModelState;
@@ -153,7 +157,10 @@ export function Login() {
                     name="username"
                     label="Username"
                 />
-                <TextField onChange={onFormChange} name="password" label="Password"/>
+                <TextField
+                    onChange={onFormChange}
+                    name="password"
+                    label="Password"/>
             </div>
             <LoginButton/>
         </form>

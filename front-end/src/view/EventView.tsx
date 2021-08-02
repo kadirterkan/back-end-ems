@@ -7,6 +7,7 @@ import {MessageType} from "../common/dto/MessageResponse";
 import {toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {Button} from "@material-ui/core";
+import {QRCodeShow} from "./QR/QRCodeShow";
 
 
 
@@ -30,6 +31,9 @@ export function EventView(){
 
     const eventViewApi = new EventViewApi();
 
+    const [isQRViewerOpen, setIsQRViewerOpen] = useState(false);
+
+
     const [eventQueryResponses, setEventQueryResponses] = useState<EventQueryResponse[]>([]);
     const [selected,setSelected]=useState(false);
     const [selectedItem,setSelectedItem] = useState<EventModel>(initialstate);
@@ -42,6 +46,7 @@ export function EventView(){
         const messageResponse = await eventViewApi.addEventToUser(selectedItem);
         if(messageResponse.messageType === MessageType.SUCCESS){
             toast.success(messageResponse.message);
+            setIsQRViewerOpen(true);
             fetchEvents();
         }
         else {
@@ -79,6 +84,12 @@ export function EventView(){
                 <Button onClick={addEventToUser}>JOIN</Button>
                 :
                 <div>CLICK TO AN EVENT TO JOIN</div>
+            }
+            {
+                isQRViewerOpen ?
+                    <QRCodeShow isOpen={isQRViewerOpen} handleClose={() => setIsQRViewerOpen(false)} model={selectedItem}/>
+                    :
+                    <div/>
             }
         </div>
     );

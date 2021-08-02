@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import yte.intern.project.user.loginjwt.configuration.JWTConfig;
+import yte.intern.project.user.configuration.JWTConfig;
 
 @Configuration
 @EnableWebSecurity
@@ -24,7 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/login","/registration","/home","/guest").permitAll()
+                .antMatchers("/login","/registration","/home","/guest","/controller/list").permitAll()
                 .and()
                 .csrf().disable()
                 .sessionManagement()

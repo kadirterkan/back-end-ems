@@ -1,6 +1,5 @@
 import React, {ChangeEvent, useState} from "react";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@material-ui/core";
-import classes from "*.module.css";
 import {ModApi} from "../api/ModApi";
 import {MessageType} from "../../common/dto/MessageResponse";
 import {toast} from "react-toastify";
@@ -75,7 +74,6 @@ export function EventEdit(props: Props){
                 <TextField
                     onChange={nameHandler}
                     label={"Event Name"}
-                    className={classes.textField}
                     value={eventModel.eventName}
                     inputProps={{
                         name:"eventName",
@@ -86,7 +84,6 @@ export function EventEdit(props: Props){
                     label="Event-Start-Time"
                     type="datetime-local"
                     value={eventModel.startTime}
-                    className={classes.textField}
                     inputProps={{
                         name:'startTime',
                     }}
@@ -96,14 +93,12 @@ export function EventEdit(props: Props){
                 name={"endTime"}
                 type={"datetime-local"}
                 value={eventModel.endTime}
-                className={classes.textField}
             />
                 <TextField
                     onChange={quotaHandler}
                     label={"Event Quota"}
                     name={"quota"}
                     value={eventModel.quota}
-                    className={classes.textField}
                 />
             </DialogContent>
             <DialogActions>

@@ -1,5 +1,5 @@
 import {EventQueryResponse, ModApi} from "../api/ModApi";
-import {DataGrid, GridCellValue, GridRowId, GridRowParams} from "@material-ui/data-grid";
+import {DataGrid, GridRowParams} from "@material-ui/data-grid";
 import {useState} from "react";
 
 const tableColumns = [

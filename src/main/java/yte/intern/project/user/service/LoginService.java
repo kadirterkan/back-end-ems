@@ -1,4 +1,4 @@
-package yte.intern.project.user.loginjwt.service;
+package yte.intern.project.user.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,9 +9,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import yte.intern.project.common.dto.MessageResponse;
 import yte.intern.project.user.entities.Authority;
-import yte.intern.project.user.loginjwt.jwt.JWTUtil;
-import yte.intern.project.user.loginjwt.request.LoginRequest;
-import yte.intern.project.user.service.AuthorityService;
+import yte.intern.project.user.utils.JWTUtil;
+import yte.intern.project.user.controller.request.LoginRequest;
 
 import static yte.intern.project.common.enums.MessageType.ERROR;
 import static yte.intern.project.common.enums.MessageType.SUCCESS;

@@ -1,13 +1,13 @@
 package yte.intern.project.event.controller;
 
 
+import com.google.zxing.common.BitMatrix;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import yte.intern.project.common.dto.MessageResponse;
 import yte.intern.project.event.controller.request.*;
 import yte.intern.project.event.service.CustomEventService;
-import yte.intern.project.user.loginjwt.configuration.AuthenticationFacade;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -43,26 +43,31 @@ public class EventController {
 
     @PreAuthorize("hasAuthority('MODERATOR')")
     @PostMapping("/addevent")
-    public MessageResponse addEventToDb(@RequestBody @Valid AddEventRequest addEventRequest){
+    public MessageResponse addEventToDb(@RequestBody @Valid EventRequest addEventRequest){
         return customEventService.addEventToDb(addEventRequest);
     }
 
     @PreAuthorize("hasAuthority('MODERATOR')")
     @PostMapping("/editevent")
-    public MessageResponse editEvent(@RequestBody @Valid UpdateEventRequest updateEventRequest){
+    public MessageResponse editEvent(@RequestBody @Valid EventRequest updateEventRequest){
         return customEventService.editEvent(updateEventRequest);
     }
 
     @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/addeventuser")
-    public MessageResponse addEventToUser(@RequestBody AddEventToUserRequest addEventToUserRequest){
+    public MessageResponse addEventToUser(@RequestBody EventRequest addEventToUserRequest){
         String eventName = addEventToUserRequest.getEventName();
         return customEventService.addUserToEvent(eventName);
     }
 
     @PreAuthorize("hasAuthority('MODERATOR')")
     @PostMapping("/delete")
-    public MessageResponse deleteEvent(@RequestBody DeleteEventRequest deleteEventRequest){
+    public MessageResponse deleteEvent(@RequestBody EventRequest deleteEventRequest){
         return customEventService.deleteEvent(deleteEventRequest);
+    }
+
+    @PostMapping("/qrcode")
+    public BitMatrix getBitMatrix(@RequestBody EventRequest request) throws Exception {
+        return customEventService.getQRCodeBitMatrix(request);
     }
 }

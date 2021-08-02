@@ -1,4 +1,4 @@
-package yte.intern.project.user.loginjwt.request;
+package yte.intern.project.user.controller.request;
 
 import lombok.Getter;
 import lombok.ToString;

@@ -2,6 +2,7 @@ import axios from "axios";
 import {EventQueryResponse} from "../../moderator/api/ModApi";
 import {MessageResponse} from "../../common/dto/MessageResponse";
 import {EventModel} from "../EventView";
+import {BitMatrix} from "@zxing/library";
 
 
 export class EventViewApi{
@@ -15,4 +16,8 @@ export class EventViewApi{
         return response.data;
     }
 
+    async bringQRCodeData(model:EventModel):Promise<BitMatrix>{
+        const response = await axios.post<BitMatrix>("/qrcode",model);
+        return response.data;
+    }
 }

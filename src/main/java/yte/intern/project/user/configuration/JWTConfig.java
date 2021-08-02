@@ -1,4 +1,4 @@
-package yte.intern.project.user.loginjwt.configuration;
+package yte.intern.project.user.configuration;
 
 
 import lombok.NoArgsConstructor;
@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import yte.intern.project.user.loginjwt.jwt.JWTUtil;
+import yte.intern.project.user.utils.JWTUtil;
 import yte.intern.project.user.service.UserService;
 
 import javax.servlet.FilterChain;

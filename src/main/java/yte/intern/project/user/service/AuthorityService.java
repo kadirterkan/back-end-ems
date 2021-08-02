@@ -3,7 +3,6 @@ package yte.intern.project.user.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import yte.intern.project.user.entities.AppUser;
 import yte.intern.project.user.entities.Authority;
 import yte.intern.project.user.repository.AuthorityRepository;
 
@@ -41,10 +40,6 @@ public class AuthorityService {
         if(doesntExist("MODERATOR")){
             Authority moderator = new Authority(null,"MODERATOR",new HashSet<>());
             authorityRepository.save(moderator);
-        }
-        if(doesntExist("GUEST")){
-            Authority guest = new Authority(null,"GUEST",new HashSet<>());
-            authorityRepository.save(guest);
         }
     }
 
