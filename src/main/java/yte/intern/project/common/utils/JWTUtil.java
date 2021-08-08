@@ -1,11 +1,11 @@
-package yte.intern.project.user.utils;
+package yte.intern.project.common.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import yte.intern.project.user.entities.Authority;
+import yte.intern.project.user.enumer.RoleEnum;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -34,14 +34,6 @@ public class JWTUtil {
                 .compact();
     }
 
-    public static String generateTokenForGuest(Authority authority, String key){
-        return Jwts.builder()
-                .setSubject("guest")
-                .claim("authorities",authority.getAuthority())
-                .setExpiration(getExperationDate())
-                .signWith(Keys.hmacShaKeyFor(key.getBytes()))
-                .compact();
-    }
 
     public static String extractUsername(String jwtToken, String secretKey){
         Claims claims = Jwts.parserBuilder()

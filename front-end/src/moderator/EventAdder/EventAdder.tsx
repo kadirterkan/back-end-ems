@@ -7,10 +7,10 @@ import {toast} from "react-toastify";
 interface Props {
     isOpen: boolean;
     handleClose: () => void,
-    addEvent: (model:EventModel) => void
+    addEvent: (model:EventRequest) => void
 }
 
-export interface EventModel{
+export interface EventRequest {
     quota:number;
     eventName:string;
     startTime:Date;
@@ -18,7 +18,7 @@ export interface EventModel{
 }
 
 
-const initialstate: EventModel = {
+const initialstate: EventRequest = {
     quota:0,
     eventName:"",
     startTime:new Date(),
@@ -31,15 +31,15 @@ export function EventAdder(props: Props){
 
     const eventAdderApi = new ModApi();
 
-    const [eventModel,setEventModel] = useState<EventModel>(initialstate);
+    const [eventModel,setEventModel] = useState<EventRequest>(initialstate);
 
-    const eventAdder = async (model: EventModel) => {
+    const eventAdder = async (model: EventRequest) => {
         const messageResponse = await eventAdderApi.eventAdder(model);
         if(messageResponse.messageType === MessageType.SUCCESS){
-            toast("SUCCESSFULLY ADDED EVENT");
+            toast.success(messageResponse.message);
         }
         else{
-            toast("AN ERROR OCCURRED DURING THE PROCESS")
+            toast.error(messageResponse.message);
         }
     }
 

@@ -1,14 +1,16 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
-import {Button, TextField} from "@material-ui/core";
-import {LoginApi} from "./api/LoginAPI";
+import React, {ChangeEvent, useState} from 'react';
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@material-ui/core";
+import {LoginApi, RoleEnum} from "./api/LoginAPI";
 import {MessageType} from "../common/dto/MessageResponse";
 import {toast} from "react-toastify";
-import Cookies from "js-cookie";
 import {useHistory} from "react-router-dom";
 
 
 export interface Props{
-    isLoggedIn:(value:boolean) => void;
+    isOpen:boolean;
+    handleClose:() => void;
+    loggedIn:()=>void;
+    role:(value:string) => void;
 }
 
 export interface UserLoginModel{
@@ -30,16 +32,16 @@ export function Login(props: Props) {
 
     const loginApi = new LoginApi();
 
-    const loggedIn = async() => {
-        let response = await loginApi.loggedIn();
-
-        if (response) {
-            setUserLoggedIn(true);
-        }
-
-    }
-
-    loggedIn();
+    // const loggedIn = async() => {
+    //     let response = await loginApi.loggedIn();
+    //
+    //     if (response) {
+    //         setUserLoggedIn(true);
+    //     }
+    //                      TODO: HANDLE MOUNTING
+    // }
+    //
+    // loggedIn();
 
     const [userLoggedIn, setUserLoggedIn] = useState(false);
     const [userLoginModel, setUserLoginModel] = useState<UserLoginModel>(initialState);
@@ -48,14 +50,22 @@ export function Login(props: Props) {
 
     const userLogin = async (model: UserLoginModel) => {
         const messageResponse = await loginApi.Login(model);
-        console.log(messageResponse.message);
-        if (messageResponse.messageType === MessageType.SUCCESS) {
+        if (messageResponse.messageType === MessageType.LOGIN_USER) {
             isValid = true;
-            toast.success("SUCCESFULLY LOGGED IN");
+            toast.success(messageResponse.message);
             history.push('/');
-            Cookies.set("Authentication", messageResponse.message);
-            // props.isLoggedIn(true);
-        } else {
+            props.handleClose();
+            props.loggedIn();
+            props.role(RoleEnum.USER);
+        } else if(messageResponse.messageType === MessageType.LOGIN_MOD){
+            isValid = true;
+            toast.success(messageResponse.message);
+            history.push('/');
+            props.handleClose();
+            props.loggedIn();
+            props.role(RoleEnum.MOD);
+        }else
+        {
             isValid = false;
             toast.error(messageResponse.message);
         }
@@ -74,12 +84,10 @@ export function Login(props: Props) {
         const newModelState = {...userLoginModel};
         switch (field) {
             case "username":
-                console.log(value);
                 newModelState.username = value;
                 setUserLoggedIn(true);
                 break;
             case "password":
-                console.log(value);
                 newModelState.password = value;
                 break;
         }
@@ -149,20 +157,29 @@ export function Login(props: Props) {
         )
     }
 
-    return (
-        <form className={"entity"} noValidate autoComplete="off">
-            <div className={"field-containers"}>
+
+    return(
+        <Dialog
+            open={props.isOpen}
+            onClose={props.handleClose}>
+            <DialogTitle>Login</DialogTitle>
+            <DialogContent>
                 <TextField
                     onChange={onFormChange}
-                    name="username"
-                    label="Username"
-                />
+                    name={"username"}
+                    label={"Username"}
+                    />
                 <TextField
                     onChange={onFormChange}
-                    name="password"
-                    label="Password"/>
-            </div>
-            <LoginButton/>
-        </form>
+                    name={"password"}
+                    type={'password'}
+                    label={"Password"}
+                    />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={props.handleClose}>Cancel</Button>
+                <LoginButton/>
+            </DialogActions>
+        </Dialog>
     );
 }

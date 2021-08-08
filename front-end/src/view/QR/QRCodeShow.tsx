@@ -1,32 +1,38 @@
-import {EventModel} from "../EventView";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
-import QRcode from 'qrcode.react'
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
+import {EventQueryResponse} from "../../moderator/api/ModApi";
+import {EventViewApi} from "../api/EventViewApi";
 
 interface Props {
     isOpen: boolean;
-    handleClose: () => void,
-    model: EventModel
+    handleClose: () => void;
+    selectedEvent:EventQueryResponse;
 }
 
 
 export function QRCodeShow(props: Props){
 
-    const [image,SetImage] = useState();
+    const api = new EventViewApi();
 
-    const modelToString = (model:EventModel) => {
+    const [loading,setLoading] = useState(false);
+    const [image,setImage] = useState<string>("");
 
-        let newValue = "EVENT NAME \n";
-        newValue+=model.eventName;
-        newValue+="EVENT START DATE \n";
-        newValue+=model.startTime.toString();
-        newValue+="EVENT END DATE \n";
-        newValue+=model.endTime.toString();
-        newValue+="EVENT QUOTA";
-        newValue+=model.quota.toString();
-
-        return newValue;
+    const bringQrCode = async () => {
+        setLoading(false);
+        const response = await api.bringQRCodeData(props.selectedEvent.title);
+        if(response!=null){
+            setImage(response);
+        }
+        setLoading(true);
     }
+
+    useEffect(() => {
+        if(props.isOpen){
+            console.log("test");
+            bringQrCode();
+        }
+    },[props.isOpen])
+
 
     return(
         <Dialog
@@ -34,10 +40,7 @@ export function QRCodeShow(props: Props){
             onClose={props.handleClose}>
             <DialogTitle>QR CODE</DialogTitle>
             <DialogContent>
-                <QRcode value={modelToString(props.model)}
-                        id="qr"
-                        size={320}
-                        includeMargin={true}/>
+                {loading && <img src={`data:image/jpeg;base64,${image}`} />}
             </DialogContent>
             <DialogActions>
                 <Button onClick={props.handleClose}>Close</Button>

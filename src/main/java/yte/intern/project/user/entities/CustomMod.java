@@ -1,5 +1,6 @@
 package yte.intern.project.user.entities;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import yte.intern.project.event.entities.CustomEvent;
@@ -12,33 +13,34 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@NoArgsConstructor
-public class Moderator extends BaseUser{
+public class CustomMod extends BaseUser{
 
     @OneToMany(mappedBy = "createdBy")
     private Set<CustomEvent> createdEvents;
 
     private String companyName;
+    private String departmentName;
 
-    private final RoleEnum role = RoleEnum.MODERATOR;
-
-    public Moderator(String username,
+    public CustomMod(String username,
                      String firstName,
                      String lastName,
-                     String tcKimlikNumber,
                      String email,
                      String password,
-                     Set<CustomEvent> createdEvents,
-                     String companyName) {
+                     String companyName,
+                     String departmentName) {
         super(username,
                 firstName,
                 lastName,
-                tcKimlikNumber,
                 email,
-                password);
-        this.createdEvents = createdEvents;
+                password,
+                RoleEnum.MOD);
         this.companyName = companyName;
-        this.createdEvents = new HashSet<CustomEvent>();
+        this.createdEvents = new HashSet<>();
+        this.departmentName = departmentName;
+    }
+
+    public CustomMod() {
+        super(RoleEnum.MOD);
     }
 
     public boolean addCreatedEvent(CustomEvent createdEvent){
@@ -46,8 +48,4 @@ public class Moderator extends BaseUser{
     }
 
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return (Collection<? extends GrantedAuthority>) role.getGrantedAuthority();
-    }
 }

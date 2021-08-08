@@ -1,6 +1,17 @@
 import {EventQueryResponse, ModApi} from "../../moderator/api/ModApi";
-import {DataGrid, GridRowParams} from "@material-ui/data-grid";
-import {useState} from "react";
+import {Component, useEffect, useState} from "react";
+import FullCalendar, {DateSelectArg, EventMountArg} from "@fullcalendar/react";
+import {EventClickArg} from "@fullcalendar/core";
+import interactionPlugin from "@fullcalendar/interaction";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import momentTimezonePlugin from "@fullcalendar/moment-timezone";
+import listPlugin from '@fullcalendar/list';
+import React from "react";
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css'; // optional for styling
+
+
 
 const tableColumns = [
     {field: "id", headerName: "ID"},
@@ -13,38 +24,74 @@ const tableColumns = [
 
 interface Props {
     events:EventQueryResponse[];
-    selectedItem:(value:boolean) => void;
-    selected:(value:GridRowParams) => void;
+    selectedItem:(value:EventClickArg) => void;
+    eventSelected:() => void;
 }
 
 export function EventList(props:Props){
     const modApi = new ModApi();
 
-    const [selected,setSelected] = useState(false);
+    const [loading,setLoading] = useState(false);
+    const [eventQuery,setEventQuery] = useState<EventQueryResponse[]>([]);
 
-    const handleRowSelection = (selection:GridRowParams) => {
-        setSelected(true);
-        props.selectedItem(selected);
 
-        props.selected(selection);
+    async function fetchEvents() {
+
+        setLoading(false);
+
+
+        const response = await modApi.getEvents();
+
+        if (response!=null) {
+            setEventQuery(response);
+        }
+
+        setLoading(true);
+
     }
 
-    const handleRowOut = () => {
-        if(selected){
-            setSelected(false);
-            props.selectedItem(selected);
+    const eventDidMountHandler = (selected:EventMountArg) => {
+
+        let event = eventQuery.find((eventId) => eventId.id ==selected.event.id);
+
+        if (event!=undefined) {
+            let content:string = event.title+ "\n" + " quota: " + event.quota.toString() + " people attending: " + event.attending.toString();
+
+            tippy(selected.el, {
+                content: content
+            });
         }
     }
 
 
+
+
+    useEffect(() => {
+        fetchEvents();
+    },[]);
+
+
     return(
         <div style={{height: 400, width: '100%'}}>
-            <DataGrid
-                columns={tableColumns}
-                rows={props.events}
-                onRowOut={()=>handleRowOut()}
-                onRowClick={(params)=> handleRowSelection(params)}
-                pageSize={10}/>
+            <FullCalendar
+                headerToolbar={{
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                }}
+                droppable={false}
+                eventDidMount={eventDidMountHandler}
+                plugins={[interactionPlugin,dayGridPlugin,timeGridPlugin,momentTimezonePlugin,listPlugin]}
+                validRange={
+                    {start:new Date()}
+                }
+                initialView="dayGridMonth"
+                events={props.events}
+                editable={false}
+                selectable={true}
+                eventClick={(value:EventClickArg) => {props.eventSelected();props.selectedItem(value)}}
+            />
+
         </div>
  );
 }

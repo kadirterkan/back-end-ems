@@ -6,11 +6,14 @@ export interface UserQueryResponse{
     username:string;
     password:string;
 }
+export enum RoleEnum {
+    MOD="MOD",
+    USER="USER"
+}
 
 export class LoginApi {
 
     async Login(userLoginModel: UserLoginModel): Promise<MessageResponse> {
-        console.log(userLoginModel.username);
         const response = await axios.post<MessageResponse>("/login",userLoginModel);
         return response.data;
     }
@@ -20,8 +23,4 @@ export class LoginApi {
         return response.data;
     }
 
-    async getName():Promise<string> {
-        const response = await axios.get<string>("getname");
-        return response.data;
-    }
 }

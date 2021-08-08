@@ -1,20 +1,20 @@
 package yte.intern.project.user.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import yte.intern.project.common.entities.UserEvent;
 import yte.intern.project.event.entities.CustomEvent;
-import yte.intern.project.user.entities.BaseUser;
-import yte.intern.project.user.entities.SimpleUser;
+import yte.intern.project.user.entities.CustomUser;
 
 import java.util.Optional;
 
-public interface SimpleUserRepository extends JpaRepository<SimpleUser,Long> {
+public interface SimpleUserRepository extends JpaRepository<CustomUser,Long> {
     boolean existsById(Long id);
 
-    Optional<SimpleUser> findById(Long id);
+    Optional<CustomUser> findById(Long id);
 
-    Optional<SimpleUser> findByUsername(String username);
+    Optional<CustomUser> findByUsername(String username);
 
-    Optional<SimpleUser> findByEmail(String email);
+    Optional<CustomUser> findByEmail(String email);
 
     boolean existsByEmail(String email);
 
@@ -22,5 +22,7 @@ public interface SimpleUserRepository extends JpaRepository<SimpleUser,Long> {
 
     boolean existsByUsername(String username);
 
-    boolean existsAppUserByCustomEventSetContains(CustomEvent customEvent);
+    boolean existsAppUserByEventsContains(UserEvent userEvent);
+
+    boolean existsByUsernameAndEventsContains(String tcKimlikNumber,CustomEvent customEvent);
 }

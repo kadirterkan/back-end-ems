@@ -2,24 +2,25 @@ package yte.intern.project.event.controller.request;
 
 import lombok.Getter;
 import yte.intern.project.event.entities.CustomEvent;
-import yte.intern.project.user.entities.BaseUser;
+import yte.intern.project.user.entities.CustomMod;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 @Getter
 public class EventRequest {
 
     public EventRequest(String eventName,
                            Long quota,
-                           LocalDateTime startTime,
-                           LocalDateTime endTime) {
+                           ZonedDateTime startTime,
+                        ZonedDateTime endTime) {
         this.eventName = eventName;
         this.quota = quota;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.startTime = startTime.withZoneSameInstant(ZoneId.of("Europe/Istanbul")).toLocalDateTime();
+        this.endTime = endTime.withZoneSameInstant(ZoneId.of("Europe/Istanbul")).toLocalDateTime();
         if(startTime.isBefore(endTime)){
 //            TODO:GIVE AN ERROR
         }
@@ -36,14 +37,13 @@ public class EventRequest {
     @Future
     private final LocalDateTime endTime;
 
-    public CustomEvent toEvent(BaseUser creator){
+    public CustomEvent toEvent(CustomMod creator){
         return new CustomEvent(
                 this.quota,
                 this.eventName,
                 creator,
                 this.startTime,
-                this.endTime,
-                new HashSet<>()
+                this.endTime
         );
     }
 }

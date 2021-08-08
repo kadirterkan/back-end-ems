@@ -1,14 +1,14 @@
 import {useEffect, useState} from "react";
 import {EventQueryResponse, ModApi} from "./api/ModApi";
-import {EventAdder, EventModel} from "./EventAdder/EventAdder";
+import {EventAdder, EventRequest} from "./EventAdder/EventAdder";
 import {MessageType} from "../common/dto/MessageResponse";
 import {toast} from "react-toastify";
 import {Button} from "@material-ui/core";
 import {ModEventList} from "./EventList/ModEventList";
 import {GridRowParams} from "@material-ui/data-grid";
-import {EventEdit} from "./EventEdit/ModEventEdit";
+// import {EventEdit} from "./EventEdit/ModEventEdit";
 
-const initialstate: EventModel = {
+const initialstate: EventRequest = {
     quota:0,
     eventName:"",
     startTime:new Date(),
@@ -17,66 +17,76 @@ const initialstate: EventModel = {
 
 
 export function ModView(){
-    const [isAddEventModelOpen, setAddEventModelOpen] = useState(false);
-    const [isEditEventModelOpen, setIsEditEventModelOpen] = useState(false);
-
-    const [eventQueryResponses, setEventQueryResponses] = useState<EventQueryResponse[]>([]);
-
-    const [selectedItem,setSelectedItem] = useState(false);
-
-    const modApi = new ModApi();
-
-    const [selected,setSelected] = useState<EventModel>(initialstate);
 
 
+    // const [isAddEventModelOpen, setAddEventModelOpen] = useState(false);
 
-    function fetchEvents(){
-        modApi.getEvents()
-            .then(data => setEventQueryResponses(data));
-    }
+    // const [eventQueryResponses, setEventQueryResponses] = useState<EventQueryResponse[]>([]);
+    // const [isLoaded,setIsLoaded] = useState(false);
+    // const [selectedItem,setSelectedItem] = useState(false);
+    //
+    // const modApi = new ModApi();
+    //
+    // const [selected,setSelected] = useState<EventModel>(initialstate);
 
-    useEffect(() => {
-        fetchEvents();
-    }, []);
 
-    const addEvent = async (model: EventModel) => {
-        const messageResponse = await modApi.eventAdder(model);
 
-        if(messageResponse.messageType === MessageType.SUCCESS){
-            toast.success(messageResponse.message);
-            setAddEventModelOpen(false);
-            fetchEvents();
-        }
-        else {
-            toast.error(messageResponse.message);
-        }
-    }
+    // function fetchEvents(){
+    //     modApi.getEvents()
+    //         .then(data => setEventQueryResponses(data));
+    //     setIsLoaded(true);
+    // }
 
-    const whenSelected = (value: GridRowParams) => {
-        if(selectedItem){
-            let newEventModel= {...selected};
 
-            newEventModel.eventName = value.getValue(value.id, "eventName") as string;
-            newEventModel.quota = value.getValue(value.id, "quota") as number;
-            newEventModel.startTime = value.getValue(value.id,"startTime") as Date;
-            newEventModel.endTime = value.getValue(value.id, "endTime") as Date;
 
-            setSelected(newEventModel);
-        }
-    }
+    // const addEvent = async (model: EventModel) => {
+    //     const messageResponse = await modApi.eventAdder(model);
+    //
+    //     if(messageResponse.messageType === MessageType.SUCCESS){
+    //         toast.success(messageResponse.message);
+    //         setAddEventModelOpen(false);
+    //         fetchEvents();
+    //     }
+    //     else {
+    //         toast.error(messageResponse.message);
+    //     }
+    // }
+
+    // useEffect(() => {
+    //     fetchEvents();
+    // }, [addEvent]);
+
+    // const whenSelected = (value: GridRowParams) => {
+    //     if(selectedItem){
+    //         let newEventModel= {...selected};
+    //
+    //         newEventModel.eventName = value.getValue(value.id, "eventName") as string;
+    //         newEventModel.quota = value.getValue(value.id, "quota") as number;
+    //         newEventModel.startTime = value.getValue(value.id,"startTime") as Date;
+    //         newEventModel.endTime = value.getValue(value.id, "endTime") as Date;
+    //
+    //         setSelected(newEventModel);
+    //     }
+    // }
+
+
 
     return(
         <div>
-            <Button color={"primary"} onClick={() => setAddEventModelOpen(true)}>Add Event</Button>
-            <EventAdder isOpen={isAddEventModelOpen}
-                        handleClose={() => setAddEventModelOpen(false)}
-                        addEvent={addEvent}
-                        />
-            <EventEdit isOpen={isEditEventModelOpen}
-                       handleClose={() => setIsEditEventModelOpen(false)}
-                       addEvent={addEvent}
-                       oldEventModel={selected}/>
-            <ModEventList events={eventQueryResponses} selected={(value) => whenSelected(value)} selectedItem={(value) => setSelectedItem(value)}/>
+            {/*<Button color={"primary"} onClick={() => setAddEventModelOpen(true)}>Add Event</Button>*/}
+            {/*<EventAdder isOpen={isAddEventModelOpen}*/}
+            {/*            handleClose={() => setAddEventModelOpen(false)}*/}
+            {/*            addEvent={addEvent}*/}
+            {/*            />*/}
+            {/*<EventEdit isOpen={isEditEventModelOpen}*/}
+            {/*           handleClose={() => setIsEditEventModelOpen(false)}*/}
+            {/*           addEvent={addEvent}*/}
+            {/*           oldEventModel={selected}/>*/}
+            <ModEventList />
         </div>
     );
+
+
 }
+
+export default ModView;

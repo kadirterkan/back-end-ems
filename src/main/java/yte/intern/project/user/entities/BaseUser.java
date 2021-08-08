@@ -1,40 +1,39 @@
 package yte.intern.project.user.entities;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import yte.intern.project.event.entities.CustomEvent;
+import yte.intern.project.user.enumer.RoleEnum;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
+
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@Getter
 @Accessors(fluent = true)
-@NoArgsConstructor
 public abstract class BaseUser implements UserDetails {
 
 
     public BaseUser(String username,
                     String firstName,
                     String lastName,
-                    String tcKimlikNumber,
                     String email,
-                    String password) {
+                    String password,
+                    RoleEnum role) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.tcKimlikNumber = tcKimlikNumber;
         this.email = email;
         this.password = password;
+        this.role = role;
+    }
+
+    public BaseUser(RoleEnum role) {
+        this.role = role;
     }
 
     @Id
@@ -44,9 +43,10 @@ public abstract class BaseUser implements UserDetails {
     private String username;
     private String firstName;
     private String lastName;
-    private String tcKimlikNumber;
     private String email;
     private String password;
+
+    private final RoleEnum role;
 
     @Override
     public String getPassword() {
@@ -62,9 +62,6 @@ public abstract class BaseUser implements UserDetails {
         return Id;
     }
 
-    public String getTcKimlikNumber() {
-        return tcKimlikNumber;
-    }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -86,20 +83,23 @@ public abstract class BaseUser implements UserDetails {
         return true;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public RoleEnum getRole() {
+        return role;
+    }
 
     public String getEmail() {
         return email;
     }
 
-    @Override
-    public String toString() {
-        return "AppUser{" +
-                "username='" + username + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", tcKimlikNumber='" + tcKimlikNumber + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+    public String getLastName() {
+        return lastName;
     }
 
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Set.of(this.role.getAuthority());
+    }
 }

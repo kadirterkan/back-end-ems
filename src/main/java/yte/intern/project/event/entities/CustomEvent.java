@@ -3,13 +3,16 @@ package yte.intern.project.event.entities;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import yte.intern.project.common.entities.UserEvent;
 import yte.intern.project.event.controller.request.EventRequest;
-import yte.intern.project.user.entities.BaseUser;
+import yte.intern.project.event.controller.request.UpdateEventRequest;
+import yte.intern.project.user.entities.CustomMod;
+import yte.intern.project.user.entities.CustomUser;
 
 import javax.persistence.*;
 import javax.validation.constraints.Future;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -18,29 +21,17 @@ import java.util.Set;
 public class CustomEvent {
 
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CustomEvent customEvent = (CustomEvent) o;
-        return id.equals(customEvent.id) && quota.equals(customEvent.quota) && eventName.equals(customEvent.eventName) && startTime.equals(customEvent.startTime) && endTime.equals(customEvent.endTime) && baseUserSet.equals(customEvent.baseUserSet);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, quota, eventName, startTime, endTime, baseUserSet);
-    }
-
-
-    public CustomEvent(Long quota, String eventName, BaseUser createdBy, LocalDateTime startTime, LocalDateTime endTime, Set<BaseUser> baseUserSet) {
+    public CustomEvent(Long quota,
+                       String eventName,
+                       CustomMod createdBy,
+                       LocalDateTime startTime,
+                       LocalDateTime endTime) {
         this.quota = quota;
         this.eventName = eventName;
-        this.attending=0L;
         this.createdBy = createdBy;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.baseUserSet = baseUserSet;
+        this.users =new HashSet<>();
     }
 
     @Id
@@ -51,11 +42,10 @@ public class CustomEvent {
 
     private String eventName;
 
-    private Long attending;
 
     @ManyToOne
     @JoinColumn(name = "creater",referencedColumnName = "id")
-    private BaseUser createdBy;
+    private CustomMod createdBy;
 
 
     @Future
@@ -68,27 +58,32 @@ public class CustomEvent {
 //    @ElementCollection                    TODO: Sorular eklenmeli
 //    private List<String> questions = null;
 
-    @ManyToMany(mappedBy = "customEventSet")
-    private Set<BaseUser> baseUserSet;
+//    @ManyToMany(mappedBy = "customEventSet")
+//    private Set<CustomUser> customUserSet;
+
+    @OneToMany
+    @MapsId("event")
+    private Set<UserEvent> users;
 
 
-    public void updateCustomEvent(EventRequest newCustomEvent){
+
+    public void updateCustomEvent(UpdateEventRequest newCustomEvent){
         this.eventName = newCustomEvent.getEventName();
         this.startTime = newCustomEvent.getStartTime();
         this.endTime = newCustomEvent.getEndTime();
         this.quota = newCustomEvent.getQuota();
     }
 
-    public void addUserToEvent(BaseUser baseUser){
-        this.baseUserSet.add(baseUser);
+    public void addUserToEvent(UserEvent userEvent){
+        this.users.add(userEvent);
     }
 
     public boolean isNotFull(){
-        return baseUserSet.size()<quota;
+        return users.size()<quota;
     }
 
-    public boolean deleteUserFromEvent(BaseUser baseUser){
-        return baseUserSet.remove(baseUser);
+    public boolean deleteUserFromEvent(UserEvent userEvent){
+        return users.remove(userEvent);
     }
 
     @Override
@@ -96,10 +91,10 @@ public class CustomEvent {
         return "CustomEvent{" +
                 "quota=" + quota +
                 ", eventName='" + eventName + '\'' +
-                ", attending=" + attending +
                 ", createdBy=" + createdBy +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
+                ", currently people attending" + users.size() +
                 "}\n";
     }
 }

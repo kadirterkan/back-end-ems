@@ -4,15 +4,11 @@ package yte.intern.project.user.controller.request;
 import lombok.RequiredArgsConstructor;
 
 import lombok.ToString;
-import yte.intern.project.event.entities.CustomEvent;
-import yte.intern.project.user.entities.BaseUser;
-import yte.intern.project.user.entities.Authority;
-import yte.intern.project.user.entities.SimpleUser;
+import yte.intern.project.user.entities.CustomUser;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
 
 @RequiredArgsConstructor
 @ToString
@@ -59,13 +55,13 @@ public class SimpleUserRequest {
     @Size(max = 11,min = 11)
     private final String tcKimlikNumber;
 
-    public SimpleUser toUser(){
-        return new SimpleUser(firstName+"."+lastName,
+    public CustomUser toUser(){
+        return new CustomUser(firstName+"."+lastName,
                 firstName,
                 lastName,
-                tcKimlikNumber,
                 email,
-                password);
+                password,
+                tcKimlikNumber);
     }
 
 }

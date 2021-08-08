@@ -8,6 +8,8 @@ import yte.intern.project.common.dto.MessageResponse;
 import yte.intern.project.user.controller.request.LoginRequest;
 import yte.intern.project.user.service.LoginService;
 
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 public class LoginController {
 
@@ -28,12 +30,6 @@ public class LoginController {
         }
     }
 
-    @GetMapping("/guest")
-    public MessageResponse guest() throws Exception {
-        return loginService.guest();
-    }
-
-
     @GetMapping("/logged")
     public boolean loggedIn(Authentication authentication){
         return authentication != null;
@@ -41,9 +37,8 @@ public class LoginController {
 
 
     @PostMapping("/login")
-    public MessageResponse login(@RequestBody LoginRequest loginRequest){
-        return loginService.login(loginRequest);
+    public MessageResponse login(@RequestBody LoginRequest loginRequest, HttpServletResponse response){
+        return loginService.login(loginRequest,response);
     }
-
 
 }
