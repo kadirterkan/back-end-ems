@@ -2,19 +2,22 @@ package yte.intern.project.user.entities;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import yte.intern.project.user.enumer.RoleEnum;
+import yte.intern.project.security.entities.VerificationToken;
+import yte.intern.project.user.controller.request.IsThisYou;
+import yte.intern.project.user.enums.RoleEnum;
+import yte.intern.project.user.enums.Departments;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Set;
 
 
-@MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
+@Entity
 @Accessors(fluent = true)
+@Getter
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class BaseUser implements UserDetails {
 
 
@@ -23,13 +26,16 @@ public abstract class BaseUser implements UserDetails {
                     String lastName,
                     String email,
                     String password,
-                    RoleEnum role) {
+                    RoleEnum role,
+                    Departments departments) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.departments = departments;
+        this.enabled = false;
     }
 
     public BaseUser(RoleEnum role) {
@@ -46,7 +52,35 @@ public abstract class BaseUser implements UserDetails {
     private String email;
     private String password;
 
-    private final RoleEnum role;
+    @Lob
+    @Column( length = 100000 )
+    private String base64ProfilePicture;
+    private Departments departments;
+    private String jobDescription;
+
+    @Column(name="enabled")
+    private boolean enabled;
+
+    @OneToMany(mappedBy = "user" , cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<VerificationToken> verificationToken;
+
+    public BaseUser() {
+        this.enabled = false;
+    }
+
+    public String getBase64ProfilePicture() {
+        return base64ProfilePicture;
+    }
+
+    public void setBase64ProfilePicture(String base64ProfilePicture) {
+        this.base64ProfilePicture = base64ProfilePicture;
+    }
+
+    public Departments getDepartments() {
+        return departments;
+    }
+
+    private RoleEnum role;
 
     @Override
     public String getPassword() {
@@ -101,5 +135,17 @@ public abstract class BaseUser implements UserDetails {
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Set.of(this.role.getAuthority());
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void setPassword(String newPassword){
+        this.password = newPassword;
+    }
+
+    public IsThisYou toIsThisYou(){
+        return new IsThisYou(this.role,this.username,this.base64ProfilePicture);
     }
 }

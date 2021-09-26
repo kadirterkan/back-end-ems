@@ -3,75 +3,154 @@ package yte.intern.project.event.entities;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import yte.intern.project.common.entities.UserEvent;
-import yte.intern.project.event.controller.request.EventRequest;
-import yte.intern.project.event.controller.request.UpdateEventRequest;
+import yte.intern.project.event.enums.EventPrivacy;
 import yte.intern.project.user.entities.CustomMod;
 import yte.intern.project.user.entities.CustomUser;
+import yte.intern.project.user.enums.Departments;
 
 import javax.persistence.*;
 import javax.validation.constraints.Future;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-@Entity
 @NoArgsConstructor
 @Getter
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class CustomEvent {
 
+    public CustomEvent(Long id,
+                       Long quota,
+                       String eventName,
+                       String base64Image,
+                       String eventCategory,
+                       Departments eventPrivacy,
+                       String eventDescription,
+                       String eventDetail,
+                       LocalDateTime startTime,
+                       LocalDateTime endTime,
+                       CustomMod createdBy,
+                       List<String> questions) {
+        this.id = id;
+        this.quota = quota;
+        this.eventName = eventName;
+        this.base64Image = base64Image;
+        this.eventCategory = eventCategory;
+        this.eventPrivacy = eventPrivacy;
+        this.eventDescription = eventDescription;
+        this.eventDetail = eventDetail;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.createdBy = createdBy;
+        this.questions = questions;
+    }
 
     public CustomEvent(Long quota,
                        String eventName,
-                       CustomMod createdBy,
+                       String base64Image,
+                       String eventCategory,
+                       Departments eventPrivacy,
+                       String eventDescription,
+                       String eventDetail,
                        LocalDateTime startTime,
-                       LocalDateTime endTime) {
+                       LocalDateTime endTime,
+                       CustomMod createdBy,
+                       List<String> questions) {
         this.quota = quota;
         this.eventName = eventName;
-        this.createdBy = createdBy;
+        this.base64Image = base64Image;
+        this.eventCategory = eventCategory;
+        this.eventPrivacy = eventPrivacy;
+        this.eventDescription = eventDescription;
+        this.eventDetail = eventDetail;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.users =new HashSet<>();
+        this.createdBy = createdBy;
+        this.questions = questions;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
 
-    private Long quota;
+    protected Long quota;
 
-    private String eventName;
+    protected String eventName;
 
+    @Lob
+    @Column( length = 100000 )
+    protected String base64Image = null;
+
+    protected String eventCategory;
+
+    protected Departments eventPrivacy;
+
+    protected String eventDescription;
+
+    protected String eventDetail;
+
+    @Future
+    protected LocalDateTime startTime;
+
+    @Future
+    protected LocalDateTime endTime;
 
     @ManyToOne
     @JoinColumn(name = "creater",referencedColumnName = "id")
-    private CustomMod createdBy;
+    protected CustomMod createdBy;
 
+    @ManyToMany(mappedBy = "interestedEvents")
+    protected Set<CustomUser> interestedUsers = new HashSet<>();
 
-    @Future
-    private LocalDateTime startTime;
-
-    @Future
-    private LocalDateTime endTime;
-
-
-//    @ElementCollection                    TODO: Sorular eklenmeli
-//    private List<String> questions = null;
-
-//    @ManyToMany(mappedBy = "customEventSet")
-//    private Set<CustomUser> customUserSet;
+//    @ManyToMany(mappedBy = "savedEvents")
+//    protected  Set<CustomUser> savedUsers = new HashSet<>();
 
     @OneToMany
     @MapsId("event")
-    private Set<UserEvent> users;
+    protected Set<UserEvent> users = new HashSet<>();
+
+    @OneToMany(mappedBy = "answeredToEvent")
+    protected Set<Questionnaire> questionnaires = new HashSet<>();
 
 
+    @ElementCollection
+    private List<String> askedQuestionsByUsers = new ArrayList<>();
 
-    public void updateCustomEvent(UpdateEventRequest newCustomEvent){
-        this.eventName = newCustomEvent.getEventName();
-        this.startTime = newCustomEvent.getStartTime();
-        this.endTime = newCustomEvent.getEndTime();
-        this.quota = newCustomEvent.getQuota();
+    @ElementCollection
+    private List<String> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "answeredQuestionsByUser")
+    private Set<QuestionAnswers> questionAnswers = new HashSet<>();
+
+//    public void addSavedUser (CustomUser customUser){
+//        interestedUsers.add(customUser);
+//    }
+//
+//    public void deleteSavedUser (CustomUser customUser){
+//        interestedUsers.remove(customUser);
+//    }
+
+    public void addInterestedUser (CustomUser customUser){
+        interestedUsers.add(customUser);
+    }
+
+    public void deleteInterestedUser (CustomUser customUser){
+        interestedUsers.remove(customUser);
+    }
+
+    public void addQuestionnaire(Questionnaire question){
+        questionnaires.add(question);
+    }
+
+    public void addQuestionAnswers (QuestionAnswers questionAnswer){
+        questionAnswers.add(questionAnswer);
+    }
+
+    public void addQuestionFromUser(String question){
+        this.askedQuestionsByUsers.add(question);
     }
 
     public void addUserToEvent(UserEvent userEvent){

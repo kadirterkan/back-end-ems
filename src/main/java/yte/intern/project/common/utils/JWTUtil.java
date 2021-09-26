@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import yte.intern.project.user.enumer.RoleEnum;
 
 import java.time.Instant;
 import java.time.LocalDate;

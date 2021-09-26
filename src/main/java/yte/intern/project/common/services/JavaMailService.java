@@ -1,24 +1,15 @@
 package yte.intern.project.common.services;
 
 
-import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
-import org.junit.jupiter.api.Test;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import yte.intern.project.common.configuration.JavaMailConfiguration;
-import yte.intern.project.common.utils.QRcodeUtil;
-import yte.intern.project.event.controller.request.LittleEventRequest;
 import yte.intern.project.event.entities.CustomEvent;
-import yte.intern.project.event.service.CustomEventService;
 import yte.intern.project.user.entities.CustomUser;
 
-import javax.imageio.ImageIO;
 import javax.mail.internet.MimeMessage;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Service
@@ -36,7 +27,7 @@ public class JavaMailService {
 
     }
 
-    public void mailSender(CustomUser customUser, CustomEvent customEvent, LocalDateTime joinTime) throws Exception {
+    public void mailQrCodeSender(CustomUser customUser, CustomEvent customEvent,String base64QrCode) throws Exception {
 
         MimeMessage message = mailSender.createMimeMessage();
 
@@ -51,65 +42,30 @@ public class JavaMailService {
                         "<div> This is your QR Code for Event %s".formatted(customEvent.getEventName()) +
                         "</div>"+
                         "<div>" +
-                        "<img src='cid:qrcodeimage'/>" +
+                        "<img src={%s}/>".formatted(base64QrCode) +
                         "</div>" +
                         "</div>" +
                         "</body>" +
                         "</html>",true
         );
 
-
-        String context = customUser.toString() + '\n' + customEvent.toString() + '\n' + "joinTime=" +joinTime.toString();
-
-        BufferedImage qrCode = QRcodeUtil.generateQRCodeImage(context);
-
-        File outputfile = new File("image.jpg");
-
-        ImageIO.write(qrCode, "jpg", outputfile);
-
-        helper.addInline("qrcodeimage",
-                outputfile);
         mailSender.send(message);
+    }
 
-        }
-
-        @Test
-    public void mailTestSender() throws Exception {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-
-        mailSender.setHost("smtp.mailtrap.io");
-        mailSender.setPort(465);
-        mailSender.setUsername("b55f580d63c202");
-        mailSender.setPassword("e8bbb728c2fbc5");
-
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message,true);
-        SimpleMailMessage sender = new SimpleMailMessage();
-
-        helper.setFrom("smtp.mailtrap.io");
-        helper.setTo("kadirtayyiperkan@hotmail.com");
-        helper.setSubject("YOUR QRCODE FOR JOINING THE EVENT");
-        helper.setText("<html>"
-                    +"<body>"
-                    +"<div>Dear user, %s" +
-                    "<div>" +
-                    "<img src='cid:qrcodeimage'/>" +
-                    "</div>" +
-                    "</div>" +
-                    "</body>" +
-                    "</html>",true);
-
-        BufferedImage qrCode = QRcodeUtil.generateQRCodeImage("TEST TEST TEST TEST");
-
-        File outputfile = new File("image.jpg");
-
-        ImageIO.write(qrCode, "jpg", outputfile);
-
-        helper.addInline("qrcodeimage", outputfile);
-
-        mailSender.send(message);
-
+    public void confirmRegistrationMailSender(String receiver,String subject,String message,String confirmationUrl){
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setTo(receiver);
+        email.setSubject(subject);
+        email.setText(message + "\r\n" + confirmationUrl);
+        mailSender.send(email);
     }
 
 
+    public void passwordChangeRequest(String receiver,String subject,String message, String token){
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setTo(receiver);
+        email.setSubject(subject);
+        email.setText(message + " " + token);
+        mailSender.send(email);
+    }
 }

@@ -6,16 +6,12 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.junit.jupiter.api.Test;
-import org.mockito.internal.util.io.IOUtil;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.Base64;
 
 public class QRcodeUtil {
@@ -66,9 +62,6 @@ public class QRcodeUtil {
         ImageIO.write(bufferedImage, "jpeg", baos);
         return Base64.getEncoder().encodeToString(baos.toByteArray());
     }
-
-
-
 
     public static BitMatrix generateQRCodeBitMatrix(String barcodeText) throws Exception{
         QRCodeWriter barcodeWriter = new QRCodeWriter();

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import yte.intern.project.user.entities.CustomMod;
+import yte.intern.project.user.enums.Departments;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -11,41 +12,19 @@ import javax.validation.constraints.Size;
 
 @RequiredArgsConstructor
 @ToString
+@Getter
 public class ModeratorRequest {
 
-    public String getFirstName() {
-        return firstName;
-    }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public String getDepartmentName() {
-        return departmentName;
-    }
-
-    @NotEmpty(message = "İsim Kısmını Boş Bırakamazsınız")
-    @Size(max = 255,message = "İsminiz Bu Kadar Uzun Olamaz")
+    @NotEmpty
+    @Size(max = 255)
     private final String firstName;
 
-    @NotEmpty(message = "Soyisim Kısmını Boş Bırakamazsınız")
-    @Size(max = 255, message = "Soyisminiz Bu Kadar Uzun Olamaz")
+    @NotEmpty
+    @Size(max = 255)
     private final String lastName;
 
-    @NotEmpty(message = "Şifrenizi Lütfen Giriniz")
+    @NotEmpty
     @Size(max = 255)
     private final String password;
 
@@ -55,23 +34,16 @@ public class ModeratorRequest {
     private final String email;
 
 
-    @NotEmpty
-    @Size(max=255)
-    private final String companyName;
-
-    @NotEmpty
-    @Size(max=255)
-    private final String departmentName;
+    private final Departments department;
 
     public CustomMod toModerator(){
         return new CustomMod(
-                this.firstName+"."+this.lastName+"."+this.companyName,
+                this.firstName+"."+this.lastName+"."+this.department,
                 this.firstName,
                 this.lastName,
                 this.email,
                 this.password,
-                this.companyName,
-                this.departmentName
+                this.department
         );
     }
 }
