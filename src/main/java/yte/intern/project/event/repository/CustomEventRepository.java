@@ -12,7 +12,6 @@ import yte.intern.project.user.entities.CustomMod;
 import yte.intern.project.user.entities.CustomUser;
 import yte.intern.project.user.enums.Departments;
 
-import javax.ejb.Local;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
